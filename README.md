@@ -1,6 +1,6 @@
 # data_state
 
-An practical alternative to AsyncSnapshot, with both notifier and stream APIs.
+A practical alternative to AsyncSnapshot, with both notifier and stream APIs.
 
 ## 👩🏾‍💻 Usage
 
