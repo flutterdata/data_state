@@ -24,7 +24,7 @@ abstract class DataState<T> with _$DataState<T> {
 }
 
 class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
-  DataStateNotifier(DataState<T> state) : super(state);
+  DataStateNotifier([DataState<T> state]) : super(state);
 
   ValueStream<DataState<T>> _stream;
   BehaviorSubject<DataState<T>> _subject;

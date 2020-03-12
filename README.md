@@ -25,18 +25,20 @@ emit(state3);
 Now with a state notifier:
 
 ```dart
-final notifier = DataStateNotifier<List<T>>(
-  DataState(allModels, isLoading: true),
-);
-
-// ...
+final notifier = DataStateNotifier<List<T>>();
 
 // supply a reload function
-notifier.state = notifier.state.copyWith(model: updatedAllModels, isLoading: false, reload: () async {
+final reload = () async {
   notifier.state = notifier.state.copyWith(isLoading: true);
-  final model = await repo.findAll(params);
-  notifier.state = notifier.state.copyWith(model: model, isLoading: false);
-});
+  try {
+    final model = await _loadAll(params);
+    notifier.state = notifier.state.copyWith(model: model, isLoading: false);
+  } catch (e) {
+    notifier.state = notifier.state.copyWith(exception: DataException(e));
+  }
+};
+
+notifier.state = DataState(cachedModels, reload: reload),
 
 // ...
 
@@ -82,6 +84,22 @@ StreamBuilder<DataState<List<Post>>>(
   }
 )
 ```
+
+## FAQ
+
+#### Why is `DataState` not a freezed union?
+
+This would allow us to do the following destructuring:
+
+```dart
+state.when(
+  data: (data) => Text(data),
+  loading: () => const CircularProgressIndicator(),
+  error: (error, stackTrace) => Text('Error $error'),
+);
+```
+
+This turns out to be impractical in Flutter widgets, as there are cases where we need to render loading/error messages _in addition to_ data, and not _instead of_ data.
 
 ## ➕ Collaborating
 
