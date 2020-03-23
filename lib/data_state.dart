@@ -9,7 +9,8 @@ part 'data_state.freezed.dart';
 /// A practical alternative to the AsyncSnapshot API
 @freezed
 abstract class DataState<T> with _$DataState<T> {
-  factory DataState(T model, {
+  factory DataState({
+    T model,
     @Default(false) bool isLoading,
     Object exception,
     StackTrace stackTrace,
@@ -21,6 +22,7 @@ abstract class DataState<T> with _$DataState<T> {
 
   @late
   bool get hasModel => model != null;
+
 }
 
 class DataStateNotifier<T> extends StateNotifier<DataState<T>> {

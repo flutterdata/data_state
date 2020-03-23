@@ -2,23 +2,54 @@
 
 A practical alternative to AsyncSnapshot, with both notifier and stream APIs.
 
+```dart
+final state = DataState({
+  T model,
+  bool isLoading = false,
+  Object exception,
+  StackTrace stackTrace,
+  Future<void> Function() reload,
+});
+
+// bool getters
+
+state.hasException;
+
+state.hasModel;
+```
+
 ## 👩🏾‍💻 Usage
 
 Creating states:
 
 ```dart
-final T model;
-final state = DataState<T>(model, isLoading: true);
+
+Stream<DataState<String>> getDataStream(Stream<String> stream) async* {
+  yield DataState(isLoading: true);
+  try {
+    await for (String s in stream) {
+      yield DataState(model: s);
+    }
+  } catch (e) {
+    yield DataState(exception: e);
+  }
+}
+```
+
+or:
+
+```dart
+final state = DataState(isLoading: true);
 emit(state);
 
 // ...
 
-final state2 = state.copyWith(isLoading: false);
+final state2 = DataState(model: await getModel());
 emit(state2);
 
 // ...
 
-final state3 = state.copyWith(exception: DataException(code: 21));
+final state3 = state2.copyWith(exception: DataException(code: 21));
 emit(state3);
 ```
 
@@ -38,7 +69,7 @@ final reload = () async {
   }
 };
 
-notifier.state = DataState(cachedModels, reload: reload),
+notifier.state = DataState(model: cachedModels, reload: reload),
 
 // ...
 

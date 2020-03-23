@@ -1,3 +1,8 @@
+## [0.2.0] - 2020-03-23
+
+ * Make `model` an optional argument
+ * Improve docs
+
 ## [0.1.1] - 2020-03-12
 
  * Make initial state optional

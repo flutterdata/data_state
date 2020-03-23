@@ -7,31 +7,19 @@ part of data_state;
 // FreezedGenerator
 // **************************************************************************
 
-mixin _$DataState<T> {
-  T get model;
-  bool get isLoading;
-  Object get exception;
-  StackTrace get stackTrace;
-  Future<void> Function() get reload;
-
-  DataState<T> copyWith(
-      {T model,
-      bool isLoading,
-      Object exception,
-      StackTrace stackTrace,
-      Future<void> Function() reload});
-}
+T _$identity<T>(T value) => value;
 
 class _$DataStateTearOff {
   const _$DataStateTearOff();
 
-  _DataState<T> call<T>(T model,
-      {bool isLoading = false,
+  _DataState<T> call<T>(
+      {T model,
+      bool isLoading = false,
       Object exception,
       StackTrace stackTrace,
       Future<void> Function() reload}) {
     return _DataState<T>(
-      model,
+      model: model,
       isLoading: isLoading,
       exception: exception,
       stackTrace: stackTrace,
@@ -40,12 +28,109 @@ class _$DataStateTearOff {
   }
 }
 
+// ignore: unused_element
 const $DataState = _$DataStateTearOff();
 
+mixin _$DataState<T> {
+  T get model;
+  bool get isLoading;
+  Object get exception;
+  StackTrace get stackTrace;
+  Future<void> Function() get reload;
+
+  $DataStateCopyWith<T, DataState<T>> get copyWith;
+}
+
+abstract class $DataStateCopyWith<T, $Res> {
+  factory $DataStateCopyWith(
+          DataState<T> value, $Res Function(DataState<T>) then) =
+      _$DataStateCopyWithImpl<T, $Res>;
+  $Res call(
+      {T model,
+      bool isLoading,
+      Object exception,
+      StackTrace stackTrace,
+      Future<void> Function() reload});
+}
+
+class _$DataStateCopyWithImpl<T, $Res> implements $DataStateCopyWith<T, $Res> {
+  _$DataStateCopyWithImpl(this._value, this._then);
+
+  final DataState<T> _value;
+  // ignore: unused_field
+  final $Res Function(DataState<T>) _then;
+
+  @override
+  $Res call({
+    Object model = freezed,
+    Object isLoading = freezed,
+    Object exception = freezed,
+    Object stackTrace = freezed,
+    Object reload = freezed,
+  }) {
+    return _then(_value.copyWith(
+      model: model == freezed ? _value.model : model as T,
+      isLoading: isLoading == freezed ? _value.isLoading : isLoading as bool,
+      exception: exception == freezed ? _value.exception : exception,
+      stackTrace:
+          stackTrace == freezed ? _value.stackTrace : stackTrace as StackTrace,
+      reload:
+          reload == freezed ? _value.reload : reload as Future<void> Function(),
+    ));
+  }
+}
+
+abstract class _$DataStateCopyWith<T, $Res>
+    implements $DataStateCopyWith<T, $Res> {
+  factory _$DataStateCopyWith(
+          _DataState<T> value, $Res Function(_DataState<T>) then) =
+      __$DataStateCopyWithImpl<T, $Res>;
+  @override
+  $Res call(
+      {T model,
+      bool isLoading,
+      Object exception,
+      StackTrace stackTrace,
+      Future<void> Function() reload});
+}
+
+class __$DataStateCopyWithImpl<T, $Res> extends _$DataStateCopyWithImpl<T, $Res>
+    implements _$DataStateCopyWith<T, $Res> {
+  __$DataStateCopyWithImpl(
+      _DataState<T> _value, $Res Function(_DataState<T>) _then)
+      : super(_value, (v) => _then(v as _DataState<T>));
+
+  @override
+  _DataState<T> get _value => super._value as _DataState<T>;
+
+  @override
+  $Res call({
+    Object model = freezed,
+    Object isLoading = freezed,
+    Object exception = freezed,
+    Object stackTrace = freezed,
+    Object reload = freezed,
+  }) {
+    return _then(_DataState<T>(
+      model: model == freezed ? _value.model : model as T,
+      isLoading: isLoading == freezed ? _value.isLoading : isLoading as bool,
+      exception: exception == freezed ? _value.exception : exception,
+      stackTrace:
+          stackTrace == freezed ? _value.stackTrace : stackTrace as StackTrace,
+      reload:
+          reload == freezed ? _value.reload : reload as Future<void> Function(),
+    ));
+  }
+}
+
 class _$_DataState<T> implements _DataState<T> {
-  _$_DataState(this.model,
-      {this.isLoading = false, this.exception, this.stackTrace, this.reload})
-      : assert(model != null);
+  _$_DataState(
+      {this.model,
+      this.isLoading = false,
+      this.exception,
+      this.stackTrace,
+      this.reload})
+      : assert(isLoading != null);
 
   @override
   final T model;
@@ -58,6 +143,7 @@ class _$_DataState<T> implements _DataState<T> {
   final StackTrace stackTrace;
   @override
   final Future<void> Function() reload;
+
   bool _didhasException = false;
   bool _hasException;
 
@@ -116,28 +202,14 @@ class _$_DataState<T> implements _DataState<T> {
       const DeepCollectionEquality().hash(reload);
 
   @override
-  _$_DataState<T> copyWith({
-    Object model = freezed,
-    Object isLoading = freezed,
-    Object exception = freezed,
-    Object stackTrace = freezed,
-    Object reload = freezed,
-  }) {
-    return _$_DataState<T>(
-      model == freezed ? this.model : model as T,
-      isLoading: isLoading == freezed ? this.isLoading : isLoading as bool,
-      exception: exception == freezed ? this.exception : exception,
-      stackTrace:
-          stackTrace == freezed ? this.stackTrace : stackTrace as StackTrace,
-      reload:
-          reload == freezed ? this.reload : reload as Future<void> Function(),
-    );
-  }
+  _$DataStateCopyWith<T, _DataState<T>> get copyWith =>
+      __$DataStateCopyWithImpl<T, _DataState<T>>(this, _$identity);
 }
 
 abstract class _DataState<T> implements DataState<T> {
-  factory _DataState(T model,
-      {bool isLoading,
+  factory _DataState(
+      {T model,
+      bool isLoading,
       Object exception,
       StackTrace stackTrace,
       Future<void> Function() reload}) = _$_DataState<T>;
@@ -152,12 +224,6 @@ abstract class _DataState<T> implements DataState<T> {
   StackTrace get stackTrace;
   @override
   Future<void> Function() get reload;
-
   @override
-  _DataState<T> copyWith(
-      {T model,
-      bool isLoading,
-      Object exception,
-      StackTrace stackTrace,
-      Future<void> Function() reload});
+  _$DataStateCopyWith<T, _DataState<T>> get copyWith;
 }
