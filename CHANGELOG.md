@@ -1,3 +1,7 @@
+## [0.2.1] - 2020-04-03
+
+ * Make `stream` emit a `ValueStream<T>` (not a `ValueStream<DataState<T>>`) so it plays better with AsyncSnapshot (useful for incremental upgrades)
+
 ## [0.2.0] - 2020-03-23
 
  * Make `model` an optional argument
