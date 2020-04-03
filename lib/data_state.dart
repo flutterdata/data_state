@@ -28,11 +28,11 @@ abstract class DataState<T> with _$DataState<T> {
 class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
   DataStateNotifier([DataState<T> state]) : super(state);
 
-  ValueStream<DataState<T>> _stream;
-  BehaviorSubject<DataState<T>> _subject;
+  ValueStream<T> _stream;
+  BehaviorSubject<T> _subject;
 
-  ValueStream<DataState<T>> _initStream() {
-    _subject = BehaviorSubject<DataState<T>>.seeded(state);
+  ValueStream<T> _initStream() {
+    _subject = BehaviorSubject<T>.seeded(state.model);
     return _subject.stream;
   }
 
@@ -47,11 +47,11 @@ class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
         _subject.addError(state.exception, state.stackTrace);
         return;
       }
-      _subject.add(state);
+      _subject.add(state.model);
     }
   }
 
-  ValueStream<DataState<T>> get stream => _stream ??= _initStream();
+  ValueStream<T> get stream => _stream ??= _initStream();
 
   @override
   void dispose() {
