@@ -1,3 +1,8 @@
+## [0.2.2] - 2020-04-15
+
+ * Add tests
+ * Improve documentation
+
 ## [0.2.1] - 2020-04-03
 
  * Make `stream` emit a `ValueStream<T>` (not a `ValueStream<DataState<T>>`) so it plays better with AsyncSnapshot (useful for incremental upgrades)

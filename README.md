@@ -1,6 +1,17 @@
 # data_state
 
-A practical alternative to AsyncSnapshot, with both notifier and stream APIs.
+<img src="https://github.com/flutterdata/data_state/workflows/test/badge.svg">
+
+Easily produce and consume loading/error/data states in your application.
+
+`DataState` is a [`StateNotifier`](https://pub.dev/packages/state_notifier)-based alternative to `AsyncSnapshot`.
+
+ - Produce events: notifier API
+ - Consume events: notifier API & stream API
+
+It also supports a `reload` function to restart a data loading cycle.
+
+This is the anatomy of an immutable `DataState` object:
 
 ```dart
 final state = DataState({
@@ -10,115 +21,107 @@ final state = DataState({
   StackTrace stackTrace,
   Future<void> Function() reload,
 });
-
-// bool getters
-
-state.hasException;
-
-state.hasModel;
 ```
 
 ## 👩🏾‍💻 Usage
 
-Creating states:
+### Consuming state
+
+Flutter example:
 
 ```dart
-
-Stream<DataState<String>> getDataStream(Stream<String> stream) async* {
-  yield DataState(isLoading: true);
-  try {
-    await for (String s in stream) {
-      yield DataState(model: s);
+@override
+Widget build(BuildContext context) {
+  return StateNotifierBuilder<DataState<List<Post>>>(
+    stateNotifier: repository.watchAll(),
+    builder: (context, state, _) {
+      return Column(
+        children: [
+          if (state.isLoading)
+            CircularProgressIndicator(),
+          if (state.hasException)
+            ExceptionWidget(state.exception),
+          if (state.hasModel)
+            ModelWidget(model),
+        ],
+      );
     }
-  } catch (e) {
-    yield DataState(exception: e);
-  }
+  );
 }
 ```
 
-or:
+The `reload` function can be combined with a gesture detector or reloader widget:
+
+Example 1:
 
 ```dart
-final state = DataState(isLoading: true);
-emit(state);
-
-// ...
-
-final state2 = DataState(model: await getModel());
-emit(state2);
-
-// ...
-
-final state3 = state2.copyWith(exception: DataException(code: 21));
-emit(state3);
+GestureDetector(
+  onTap: () => state.reload(), // will trigger a rebuild with isLoading = true
+  child: _child,
+)
 ```
 
-Now with a state notifier:
+Example 2:
 
 ```dart
-final notifier = DataStateNotifier<List<T>>();
+body: EasyRefresh.builder(
+  controller: _refreshController,
+  onRefresh: () async {
+    await state.reload();
+    _refreshController.finishRefresh();
+  },
+```
 
-// supply a reload function
-final reload = () async {
-  notifier.state = notifier.state.copyWith(isLoading: true);
-  try {
-    final model = await _loadAll(params);
+Want to consume events via streams?
+
+`DataStateNotifier` actually exposes an RxDart `ValueStream`:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  final stream = repo.watchPosts().stream;
+  return StreamBuilder<List<Post>>(
+    initial: stream.value,
+    stream: stream,
+    builder: (context, snapshot) {
+      // snapshot as usual
+    }
+  );
+}
+```
+
+### 🎸 Producing state
+
+Example:
+
+```dart
+DataStateNotifier<List<T>> watchAll() {
+  final _reload = () async {
+    notifier.state = notifier.state.copyWith(isLoading: true);
+
+    try {
+      notifier.state = notifier.state.copyWith(model: await loadAll());
+    } catch (e) {
+      notifier.state = notifier.state.copyWith(exception: DataException(e));
+    }
+  };
+
+  final notifier = DataStateNotifier<List<T>>(DataState(model: [], reload: _reload));
+
+  _load();
+
+  hiveBox.watch().forEach((model) {
     notifier.state = notifier.state.copyWith(model: model, isLoading: false);
-  } catch (e) {
+  }).catchError((Object e) {
     notifier.state = notifier.state.copyWith(exception: DataException(e));
-  }
-};
-
-notifier.state = DataState(model: cachedModels, reload: reload),
-
-// ...
-
-notifier.state = notifier.state.copyWith(exception: DataException(code: 21));
+  });
+  return notifier;
+}
 ```
 
-Consuming states via `StateNotifier`:
+## ⁉ FAQ
 
-```dart
-StateNotifierBuilder<DataState<List<Post>>>(
-  stateNotifier: repo.watchPosts(),
-  builder: (context, state, _) {
-    final posts = state.model;
-    if (state.isLoading) {
-      return Center(child: CircularProgressIndicator());
-    }
-
-    // ...
-
-    if (state.hasException) {
-      return ShowError(state.exception, state.stackTrace);
-    }
-
-    // ...
-
-    GestureDetector(
-      onTap: () => state.reload(), // will trigger a rebuild with isLoading = true
-      child: _child,
-    )
-  }
-)
-```
-
-Consuming states via RxDart's `ValueStream`:
-
-```dart
-StreamBuilder<DataState<List<Post>>>(
-  stream: repo.watchPosts().stream,
-  builder: (context, snapshot) {
-    // can immediately and safely access snapshot.data
-    final state = snapshot.data;
-    // ...
-  }
-)
-```
-
-## FAQ
-
-#### Why is `DataState` not a freezed union?
+### Why is `DataState` not a freezed union?
 
 This would allow us to do the following destructuring:
 
@@ -131,6 +134,10 @@ state.when(
 ```
 
 This turns out to be impractical in Flutter widgets, as there are cases where we need to render loading/error messages _in addition to_ data, and not _instead of_ data.
+
+### Does DataStateNotifier depend on Flutter?
+
+No. It can used with pure Dart.
 
 ## ➕ Collaborating
 
