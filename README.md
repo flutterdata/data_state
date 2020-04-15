@@ -1,6 +1,6 @@
 # data_state
 
-<img src="https://github.com/flutterdata/data_state/workflows/test/badge.svg">
+[![tests](https://img.shields.io/github/workflow/status/flutterdata/data_state/test/master?label=tests&labelColor=333940&logo=github)](https://github.com/flutterdata/data_state/actions) [![pub.dev](https://img.shields.io/pub/v/data_state?label=pub.dev&labelColor=333940&logo=dart)](https://pub.dev/packages/data_state) [![license](https://img.shields.io/github/license/flutterdata/data_state?color=%23007A88&labelColor=333940&logo=mit)](https://github.com/flutterdata/data_state/blob/master/LICENSE)
 
 Easily produce and consume loading/error/data states in your application.
 

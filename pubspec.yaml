@@ -2,8 +2,6 @@ name: data_state
 description: A practical alternative to the AsyncSnapshot API
 version: 0.2.2
 homepage: https://github.com/flutterdata/data_state
-authors:
-  - Frank Treacy <me@frank06.net>
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -12,6 +10,7 @@ dependencies:
   freezed_annotation: ^0.7.1
   state_notifier: ^0.4.0
   rxdart: ^0.23.1
+  async: ^2.4.1
 
 dev_dependencies:
   test: ^1.9.4
