@@ -1,3 +1,7 @@
+## [0.2.3] - 2020-04-15
+
+ * Change dependency to be compatible with flutter_test
+
 ## [0.2.2] - 2020-04-15
 
  * Add tests
