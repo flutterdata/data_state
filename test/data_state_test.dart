@@ -11,7 +11,6 @@ void main() {
     expect(state.isLoading, false);
     expect(state.model, isNull);
     expect(state.hasModel, false);
-    expect(state.reload, isNull);
 
     final state2 = state.copyWith(exception: Exception());
     expect(state2.exception, isNotNull);
@@ -34,7 +33,17 @@ void main() {
     final delay = () => Future.delayed(Duration(milliseconds: 12));
     
     setUpAll(() {
-      notifier = DataStateNotifier(DataState(model: 'initial'));
+      notifier = DataStateNotifier(
+        DataState(model: 'initial'),
+        onError: (notifier, e, _) {
+          expect(e, predicate((e) => e.message == 'zzz'));
+        }
+      );
+    });
+
+    test('defaults', () {
+      expect(notifier.reload, isNotNull);
+      expect(notifier.onError, isNotNull);
     });
 
     test('updates state', () async {
@@ -53,6 +62,8 @@ void main() {
           case 3:
             expect(state.model, "data3");
             break;
+          default:
+            throw Exception('zzz');
         }
       }, fireImmediately: false);
 
@@ -62,6 +73,10 @@ void main() {
       notifier.state = DataState(model: "data2");
       i++;
       notifier.state = DataState(model: "data3");
+      i++;
+      notifier.state = DataState(model: "data4");
+      // await delay();
+      // i++;
       dispose();
     });
 
@@ -87,6 +102,8 @@ void main() {
           emitsError(isA<Exception>()),
         ]),
       );
+
+      
     });
 
     tearDownAll(() {

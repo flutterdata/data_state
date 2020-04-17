@@ -6,7 +6,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'data_state.freezed.dart';
 
-/// A practical alternative to the AsyncSnapshot API
 @freezed
 abstract class DataState<T> with _$DataState<T> {
   factory DataState({
@@ -14,7 +13,6 @@ abstract class DataState<T> with _$DataState<T> {
     @Default(false) bool isLoading,
     Object exception,
     StackTrace stackTrace,
-    Future<void> Function() reload,
   }) = _DataState<T>;
 
   @late
@@ -22,26 +20,32 @@ abstract class DataState<T> with _$DataState<T> {
 
   @late
   bool get hasModel => model != null;
-
 }
 
 class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
-  DataStateNotifier([DataState<T> state]) : super(state);
+  DataStateNotifier(DataState<T> state, {
+      Future<void> Function(DataStateNotifier<T>) reload,
+      void Function(DataStateNotifier<T>, dynamic, StackTrace) onError,
+    })
+    : _reloadFn = reload,
+      super(state ?? DataState<T>()) {
+        super.onError = (error, stackTrace) {
+          return onError?.call(this, error, stackTrace);
+        };
+      }
 
-  ValueStream<T> _stream;
-  BehaviorSubject<T> _subject;
-
-  ValueStream<T> _initStream() {
-    _subject = BehaviorSubject<T>.seeded(state.model);
-    return _subject.stream;
-  }
+  final Future<void> Function(DataStateNotifier<T>) _reloadFn;
 
   @override
   get state => super.state;
 
   @override
   set state(DataState<T> value) {
-    super.state = value;
+    try {
+      super.state = value;
+    } catch (err) {
+      // silence the unnecessary error thrown by StateNotifier
+    }
     if (_subject != null) {
       if (state.hasException) {
         _subject.addError(state.exception, state.stackTrace);
@@ -51,11 +55,26 @@ class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
     }
   }
 
-  ValueStream<T> get stream => _stream ??= _initStream();
+  Future<void> reload() {
+    return _reloadFn?.call(this) ?? ((_) async {});
+  }
 
   @override
   void dispose() {
     _subject?.close();
     super.dispose();
   }
+
+  // stream API
+
+  ValueStream<T> _stream;
+  BehaviorSubject<T> _subject;
+
+  ValueStream<T> _initStream() {
+    _subject = BehaviorSubject<T>.seeded(state.model);
+    return _subject.stream;
+  }
+
+  ValueStream<T> get stream => _stream ??= _initStream();
+
 }

@@ -1,3 +1,9 @@
+## [0.2.4] - 2020-04-16
+
+ * Add `onError`
+ * Move `reload` to notifier and supply it as param
+ * More tests and improved docs
+
 ## [0.2.3] - 2020-04-15
 
  * Change dependency to be compatible with flutter_test

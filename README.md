@@ -9,20 +9,6 @@ Easily produce and consume loading/error/data states in your application.
  - Produce events: notifier API
  - Consume events: notifier API & stream API
 
-It also supports a `reload` function to restart a data loading cycle.
-
-This is the anatomy of an immutable `DataState` object:
-
-```dart
-final state = DataState({
-  T model,
-  bool isLoading = false,
-  Object exception,
-  StackTrace stackTrace,
-  Future<void> Function() reload,
-});
-```
-
 ## 👩🏾‍💻 Usage
 
 ### Consuming state
@@ -33,7 +19,7 @@ Flutter example:
 @override
 Widget build(BuildContext context) {
   return StateNotifierBuilder<DataState<List<Post>>>(
-    stateNotifier: repository.watchAll(),
+    stateNotifier: repo.watchPosts(),
     builder: (context, state, _) {
       return Column(
         children: [
@@ -42,7 +28,7 @@ Widget build(BuildContext context) {
           if (state.hasException)
             ExceptionWidget(state.exception),
           if (state.hasModel)
-            ModelWidget(model),
+            ShowPost(state.model),
         ],
       );
     }
@@ -50,13 +36,13 @@ Widget build(BuildContext context) {
 }
 ```
 
-The `reload` function can be combined with a gesture detector or reloader widget:
+The notifier also supports a `reload` function to restart a data loading cycle. It can be combined with a gesture detector or reloader widget:
 
 Example 1:
 
 ```dart
 GestureDetector(
-  onTap: () => state.reload(), // will trigger a rebuild with isLoading = true
+  onTap: () => notifier.reload(), // will trigger a rebuild with isLoading = true
   child: _child,
 )
 ```
@@ -67,7 +53,7 @@ Example 2:
 body: EasyRefresh.builder(
   controller: _refreshController,
   onRefresh: () async {
-    await state.reload();
+    await notifier.reload();
     _refreshController.finishRefresh();
   },
 ```
@@ -90,34 +76,44 @@ Widget build(BuildContext context) {
 }
 ```
 
+This is the anatomy of an immutable `DataState` object:
+
+```dart
+final state = DataState({
+  T model,
+  bool isLoading = false,
+  Object exception,
+  StackTrace stackTrace,
+});
+```
+
 ### 🎸 Producing state
 
 Example:
 
 ```dart
-DataStateNotifier<List<T>> watchAll() {
-  final _reload = () async {
-    notifier.state = notifier.state.copyWith(isLoading: true);
+DataStateNotifier<List<Post>> watchPosts() {
+  final notifier = DataStateNotifier<List<Post>>(
+    DataState(model: getLocalPosts()),
+    reload: (notifier) async {
+      notifier.state = notifier.state.copyWith(isLoading: true);
+      notifier.state = DataState(model: await loadPosts());
+    },
+    onError: (notifier, error, stackTrace) {
+      notifier.state = notifier.state
+          .copyWith(exception: error, stackTrace: stackTrace);
+    },
+  );
 
-    try {
-      notifier.state = notifier.state.copyWith(model: await loadAll());
-    } catch (e) {
-      notifier.state = notifier.state.copyWith(exception: DataException(e));
-    }
-  };
-
-  final notifier = DataStateNotifier<List<T>>(DataState(model: [], reload: _reload));
-
-  _load();
-
-  hiveBox.watch().forEach((model) {
-    notifier.state = notifier.state.copyWith(model: model, isLoading: false);
-  }).catchError((Object e) {
-    notifier.state = notifier.state.copyWith(exception: DataException(e));
-  });
-  return notifier;
+  // start cycle
+  return notifier..reload();
 }
 ```
+
+The `DataStateNotifier` constructor takes:
+
+ - `state` as the first positional argument
+ - `reload` and `onError` as optional named arguments
 
 ## ⁉ FAQ
 
@@ -133,7 +129,7 @@ state.when(
 );
 ```
 
-This turns out to be impractical in Flutter widgets, as there are cases where we need to render loading/error messages _in addition to_ data, and not _instead of_ data.
+This turns out to be impractical in data-driven Flutter apps as there are cases where we need to render loading/error messages _in addition to_ data – not _instead of_ data.
 
 ### Does DataStateNotifier depend on Flutter?
 
