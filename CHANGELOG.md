@@ -1,3 +1,7 @@
+## [0.2.5] - 2020-04-18
+
+ * Stream should dispose of notifier, not the other way round
+
 ## [0.2.4] - 2020-04-16
 
  * Add `onError`

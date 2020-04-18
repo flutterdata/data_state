@@ -59,19 +59,16 @@ class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
     return _reloadFn?.call(this) ?? ((_) async {});
   }
 
-  @override
-  void dispose() {
-    _subject?.close();
-    super.dispose();
-  }
-
   // stream API
 
   ValueStream<T> _stream;
   BehaviorSubject<T> _subject;
 
   ValueStream<T> _initStream() {
-    _subject = BehaviorSubject<T>.seeded(state.model);
+    _subject = BehaviorSubject<T>.seeded(state.model, onCancel: () {
+      // close the underlying notifier when closing this stream
+      dispose();
+    });
     return _subject.stream;
   }
 
