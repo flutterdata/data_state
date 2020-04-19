@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  data_state: ">= 0.2.4 < 1.0.0"
+  data_state: ">= 0.2.5 < 1.0.0"
   flutter_state_notifier: ^0.4.1
   state_notifier: ^0.4.0
 
