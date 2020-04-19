@@ -15,11 +15,13 @@ Easily produce and consume loading/error/data states in your application.
 
 Flutter example:
 
+(Note: This example depends on [flutter_data_state](https://pub.dev/packages/flutter_data_state) which is a separate package)
+
 ```dart
 @override
 Widget build(BuildContext context) {
-  return StateNotifierBuilder<DataState<List<Post>>>(
-    stateNotifier: repo.watchPosts(),
+  return DataStateBuilder<List<Post>>(
+    notifier: repo.watchPosts(),
     builder: (context, state, _) {
       return Column(
         children: [
@@ -141,4 +143,4 @@ Please use Github to ask questions, open issues and send PRs. Thanks!
 
 ## 📝 License
 
-MIT
+See [LICENSE](LICENSE)
