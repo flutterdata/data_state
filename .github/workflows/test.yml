@@ -16,8 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: pub get
     - name: Run tests
       shell: bash -l {0}
       run: |
