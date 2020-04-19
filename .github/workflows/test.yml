@@ -16,9 +16,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: pub get
+      working-directory: packages/data_state
     - name: Run tests
-      shell: bash -l {0}
-      run: |
-        pub get
-        pub run test
+      run: pub run test
       working-directory: packages/data_state
