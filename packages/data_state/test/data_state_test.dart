@@ -3,7 +3,6 @@ import 'package:test/test.dart';
 import 'package:async/async.dart';
 
 void main() {
-
   test('DataState', () {
     final state = DataState();
     expect(state.exception, isNull);
@@ -31,14 +30,12 @@ void main() {
   group('notifier', () {
     DataStateNotifier notifier;
     final delay = () => Future.delayed(Duration(milliseconds: 12));
-    
+
     setUpAll(() {
-      notifier = DataStateNotifier(
-        DataState(model: 'initial'),
-        onError: (notifier, e, _) {
-          expect(e, predicate((e) => e.message == 'zzz'));
-        }
-      );
+      notifier = DataStateNotifier(DataState(model: 'initial'),
+          onError: (notifier, e, _) {
+        expect(e, predicate((e) => e.message == 'zzz'));
+      });
     });
 
     test('defaults', () {
@@ -102,13 +99,10 @@ void main() {
           emitsError(isA<Exception>()),
         ]),
       );
-
-      
     });
 
     tearDownAll(() {
       notifier.dispose();
-    });    
+    });
   });
-
 }

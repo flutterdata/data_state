@@ -23,16 +23,16 @@ abstract class DataState<T> with _$DataState<T> {
 }
 
 class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
-  DataStateNotifier(DataState<T> state, {
-      Future<void> Function(DataStateNotifier<T>) reload,
-      void Function(DataStateNotifier<T>, dynamic, StackTrace) onError,
-    })
-    : _reloadFn = reload,
-      super(state ?? DataState<T>()) {
-        super.onError = (error, stackTrace) {
-          return onError?.call(this, error, stackTrace);
-        };
-      }
+  DataStateNotifier(
+    DataState<T> state, {
+    Future<void> Function(DataStateNotifier<T>) reload,
+    void Function(DataStateNotifier<T>, dynamic, StackTrace) onError,
+  })  : _reloadFn = reload,
+        super(state ?? DataState<T>()) {
+    super.onError = (error, stackTrace) {
+      return onError?.call(this, error, stackTrace);
+    };
+  }
 
   final Future<void> Function(DataStateNotifier<T>) _reloadFn;
 
@@ -73,5 +73,4 @@ class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
   }
 
   ValueStream<T> get stream => _stream ??= _initStream();
-
 }

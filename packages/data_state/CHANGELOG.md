@@ -1,3 +1,7 @@
+## [0.2.7] - 2020-04-19
+
+ * Stupid formatting fix
+ 
 ## [0.2.6] - 2020-04-19
 
  * Fix docs/license
