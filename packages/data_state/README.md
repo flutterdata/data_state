@@ -22,7 +22,7 @@ Flutter example:
 Widget build(BuildContext context) {
   return DataStateBuilder<List<Post>>(
     notifier: repo.watchPosts(),
-    builder: (context, state, _) {
+    builder: (context, state, notifier, _) {
       return Column(
         children: [
           if (state.isLoading)
@@ -87,6 +87,22 @@ final state = DataState({
   Object exception,
   StackTrace stackTrace,
 });
+```
+
+### Caching the notifier
+
+For caching and shielding from crazy amount of rebuilds, use the `lazyNotifier` parameter:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  return DataStateBuilder<List<Post>>(
+    lazyNotifier: () => repo.watchPosts(),
+    builder: (context, state, notifier, _) {
+      // ...
+    }
+  );
+}
 ```
 
 ### 🎸 Producing state
