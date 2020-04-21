@@ -1,6 +1,6 @@
 name: flutter_data_state
 description: DataStateBuilder and other data_state Flutter utilities
-version: 0.2.7
+version: 0.2.8
 homepage: https://github.com/flutterdata/data_state/packages/flutter_data_state
 
 environment:

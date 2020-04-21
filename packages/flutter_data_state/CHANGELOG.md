@@ -1,3 +1,7 @@
+## [0.2.8] - 2020-04-21
+
+ - add `lazyBuilder` for built-in caching
+
 ## [0.2.7] - 2020-04-19
 
  * Stupid formatting fix
