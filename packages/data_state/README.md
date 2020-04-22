@@ -97,6 +97,7 @@ For caching and shielding from crazy amount of rebuilds, use the `lazyNotifier` 
 @override
 Widget build(BuildContext context) {
   return DataStateBuilder<List<Post>>(
+    key: Key(key), // optional
     lazyNotifier: () => repo.watchPosts(),
     builder: (context, state, notifier, _) {
       // ...
@@ -104,6 +105,8 @@ Widget build(BuildContext context) {
   );
 }
 ```
+
+Supply different `key` parameters to control the caching!
 
 ### 🎸 Producing state
 

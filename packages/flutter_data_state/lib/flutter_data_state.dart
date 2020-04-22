@@ -41,7 +41,7 @@ class _DataStateBuilderState<T> extends State<DataStateBuilder<T>> {
     return StateNotifierBuilder<DataState<T>>(
       stateNotifier: _cachedNotifier,
       builder: (context, state, child) {
-        return widget.builder(context, state, widget.notifier, child);
+        return widget.builder(context, state, _cachedNotifier, child);
       },
     );
   }

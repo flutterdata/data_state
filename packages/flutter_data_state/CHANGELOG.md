@@ -1,3 +1,8 @@
+## [0.2.9] - 2020-04-21
+
+ - fix builder typo
+ - add docs
+
 ## [0.2.8] - 2020-04-21
 
  - add `lazyBuilder` for built-in caching
