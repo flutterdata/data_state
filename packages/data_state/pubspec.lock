@@ -168,7 +168,7 @@ packages:
       name: freezed
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.10.3"
+    version: "0.10.9"
   freezed_annotation:
     dependency: "direct main"
     description:
@@ -357,7 +357,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.24.0"
+    version: "0.24.1"
   shelf:
     dependency: transitive
     description:
@@ -427,7 +427,7 @@ packages:
       name: state_notifier
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.0"
+    version: "0.5.0"
   stream_channel:
     dependency: transitive
     description:

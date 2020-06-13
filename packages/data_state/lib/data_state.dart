@@ -8,8 +8,8 @@ part 'data_state.freezed.dart';
 
 @freezed
 abstract class DataState<T> with _$DataState<T> {
-  factory DataState({
-    T model,
+  factory DataState(
+    @nullable T model, {
     @Default(false) bool isLoading,
     Object exception,
     StackTrace stackTrace,
@@ -28,19 +28,13 @@ class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
     Future<void> Function(DataStateNotifier<T>) reload,
     void Function(DataStateNotifier<T>, dynamic, StackTrace) onError,
   })  : _reloadFn = reload,
-        super(state ?? DataState<T>()) {
-    super.onError = (error, stackTrace) {
-      return onError?.call(this, error, stackTrace);
-    };
-  }
+        super(state ?? DataState<T>(null));
 
   final Future<void> Function(DataStateNotifier<T>) _reloadFn;
 
-  @override
-  get state => super.state;
+  DataState<T> get data => super.state;
 
-  @override
-  set state(DataState<T> value) {
+  set data(DataState<T> value) {
     try {
       super.state = value;
     } catch (err) {
@@ -61,6 +55,8 @@ class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
 
   // stream API
 
+  ValueStream<T> get stream => _stream ??= _initStream();
+
   ValueStream<T> _stream;
   BehaviorSubject<T> _subject;
 
@@ -71,6 +67,4 @@ class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
     });
     return _subject.stream;
   }
-
-  ValueStream<T> get stream => _stream ??= _initStream();
 }

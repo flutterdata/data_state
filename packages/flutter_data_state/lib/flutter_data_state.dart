@@ -7,6 +7,17 @@ import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 typedef DataStateWidgetBuilder<T> = Widget Function(BuildContext context,
     DataState<T> state, DataStateNotifier<T> notifier, Widget child);
 
+// TODO
+// besides notifier/lazyNotifier, also take
+// future/lazyFuture; stream/lazyStream
+// so as to provide memoization/reload capabilities to those
+// const DataStateBuilder({
+//   Key key,
+//   dynamic source,
+//   @required this.builder,
+// })
+// assert(source is DataStateNotifier<T> Function() || source is DataStateNotifier<T> || Future<T> || Stream<T>)
+
 class DataStateBuilder<T> extends StatefulWidget {
   final DataStateNotifier<T> notifier;
   final DataStateNotifier<T> Function() lazyNotifier;

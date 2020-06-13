@@ -1,3 +1,8 @@
+## [0.3.0] - 2020-06-13
+
+ - `model` is now a positional argument
+ - Update `state_notifier` and `rxdart`
+
 ## [0.2.7] - 2020-04-19
 
  * Stupid formatting fix
