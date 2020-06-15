@@ -1,6 +1,6 @@
 name: flutter_data_state
 description: DataStateBuilder and other data_state Flutter utilities
-version: 0.2.9
+version: 0.3.0
 homepage: https://github.com/flutterdata/data_state/packages/flutter_data_state
 
 environment:
@@ -10,8 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   data_state: ">= 0.2.5 < 1.0.0"
-  flutter_state_notifier: ^0.4.1
-  state_notifier: ^0.4.0
+  flutter_state_notifier: ^0.4.2
 
 dev_dependencies:
   flutter_test:

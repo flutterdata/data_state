@@ -1,3 +1,7 @@
+## [0.3.0] - 2020-06-15
+
+ - update dependencies
+
 ## [0.2.9] - 2020-04-21
 
  - fix builder typo
