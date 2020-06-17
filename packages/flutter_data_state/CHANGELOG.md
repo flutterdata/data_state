@@ -1,3 +1,7 @@
+## [0.3.1] - 2020-06-17
+
+ - improve memoization
+
 ## [0.3.0] - 2020-06-15
 
  - update dependencies

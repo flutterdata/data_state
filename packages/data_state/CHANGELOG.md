@@ -1,3 +1,7 @@
+## [0.3.1] - 2020-06-17
+
+ - support producing events from `Future` and `Stream`
+
 ## [0.3.0] - 2020-06-13
 
  - `model` is now a positional argument
