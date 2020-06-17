@@ -24,13 +24,12 @@ abstract class DataState<T> with _$DataState<T> {
 
 class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
   DataStateNotifier(
-    this.initialData, {
+    DataState<T> initialData, {
     Future<void> Function(DataStateNotifier<T>) reload,
     void Function(DataStateNotifier<T>, dynamic, StackTrace) onError,
   })  : _reloadFn = reload,
-        super(DataState<T>(null));
+        super(initialData ?? DataState<T>(null));
 
-  final DataState<T> initialData;
   final Future<void> Function(DataStateNotifier<T>) _reloadFn;
 
   DataState<T> get data => super.state;

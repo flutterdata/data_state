@@ -1,4 +1,4 @@
-## [0.3.1] - 2020-06-17
+## [0.3.2] - 2020-06-17
 
  - support producing events from `Future` and `Stream`
 
