@@ -60,10 +60,10 @@ packages:
   data_state:
     dependency: "direct main"
     description:
-      name: data_state
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.5"
+      path: "../data_state"
+      relative: true
+    source: path
+    version: "0.3.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -157,7 +157,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.23.1"
+    version: "0.24.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -183,7 +183,7 @@ packages:
       name: state_notifier
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.0"
+    version: "0.5.0"
   stream_channel:
     dependency: transitive
     description:

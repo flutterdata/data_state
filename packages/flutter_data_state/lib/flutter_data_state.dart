@@ -7,52 +7,31 @@ import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 typedef DataStateWidgetBuilder<T> = Widget Function(BuildContext context,
     DataState<T> state, DataStateNotifier<T> notifier, Widget child);
 
-// TODO
-// besides notifier/lazyNotifier, also take
-// future/lazyFuture; stream/lazyStream
-// so as to provide memoization/reload capabilities to those
-// const DataStateBuilder({
-//   Key key,
-//   dynamic source,
-//   @required this.builder,
-// })
-// assert(source is DataStateNotifier<T> Function() || source is DataStateNotifier<T> || Future<T> || Stream<T>)
-
 class DataStateBuilder<T> extends StatefulWidget {
-  final DataStateNotifier<T> notifier;
-  final DataStateNotifier<T> Function() lazyNotifier;
+  final DataStateNotifier<T> Function() notifier;
   final DataStateWidgetBuilder<T> builder;
+  final bool memoize;
 
   const DataStateBuilder({
     Key key,
-    this.notifier,
-    this.lazyNotifier,
+    @required this.notifier,
     @required this.builder,
-  })  : assert(
-            (notifier == null || lazyNotifier == null) &&
-                (notifier != null || lazyNotifier != null),
-            'You must provide ONE of: `notifier`, `lazyNotifier` as parameters.'),
-        super(key: key);
+    this.memoize = true,
+  }) : super(key: key);
 
   @override
   _DataStateBuilderState<T> createState() => _DataStateBuilderState<T>();
 }
 
 class _DataStateBuilderState<T> extends State<DataStateBuilder<T>> {
-  DataStateNotifier<T> _cachedNotifier;
-
-  @override
-  void initState() {
-    super.initState();
-    _cachedNotifier = widget.lazyNotifier?.call() ?? widget.notifier;
-  }
+  DataStateNotifier<T> _memoizedNotifier;
 
   @override
   Widget build(BuildContext context) {
     return StateNotifierBuilder<DataState<T>>(
-      stateNotifier: _cachedNotifier,
+      stateNotifier: _memoizedNotifier ??= widget.notifier.call(),
       builder: (context, state, child) {
-        return widget.builder(context, state, _cachedNotifier, child);
+        return widget.builder(context, state, _memoizedNotifier, child);
       },
     );
   }
