@@ -1,3 +1,7 @@
+## [0.3.3] - 2020-06-22
+ 
+ - upgrade `freezed`
+
 ## [0.3.2] - 2020-06-17
 
  - support producing events from `Future` and `Stream`
