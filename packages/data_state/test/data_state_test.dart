@@ -33,9 +33,6 @@ void main() {
     setUpAll(() {
       notifier = DataStateNotifier(
         DataState('initial'),
-        onError: (notifier, e, _) {
-          expect(e, predicate((e) => e.message == 'zzz'));
-        },
       );
     });
 

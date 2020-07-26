@@ -1,6 +1,5 @@
 library data_state;
 
-import 'package:rxdart/rxdart.dart';
 import 'package:state_notifier/state_notifier.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -26,105 +25,41 @@ class DataStateNotifier<T> extends StateNotifier<DataState<T>> {
   DataStateNotifier(
     DataState<T> initialData, {
     Future<void> Function(DataStateNotifier<T>) reload,
-    void Function(DataStateNotifier<T>, dynamic, StackTrace) onError,
   })  : _reloadFn = reload,
         super(initialData ?? DataState<T>(null));
 
   final Future<void> Function(DataStateNotifier<T>) _reloadFn;
+  void Function() onDispose;
 
   DataState<T> get data => super.state;
 
   set data(DataState<T> value) {
-    try {
-      super.state = value;
-    } catch (err) {
-      // silence the unnecessary error thrown by StateNotifier
-    }
-    if (_subject != null) {
-      if (state.hasException) {
-        _subject.addError(state.exception, state.stackTrace);
-        return;
-      }
-      _subject.add(state.model);
-    }
+    super.state = value;
   }
 
   Future<void> reload() async {
     return _reloadFn?.call(this) ?? ((_) {});
   }
 
-  // stream API
-
-  ValueStream<T> get stream => _stream ??= _initStream();
-
-  ValueStream<T> _stream;
-  BehaviorSubject<T> _subject;
-
-  ValueStream<T> _initStream() {
-    _subject = BehaviorSubject<T>.seeded(
-      state.model,
-      onCancel: () {
-        // close the underlying notifier when closing this stream
-        dispose();
-      },
-    );
-    return _subject.stream;
-  }
-}
-
-// asDataNotifier
-
-extension FutureNotifierX<T> on Future<T> Function() {
-  DataStateNotifier<T> Function() get asDataNotifier {
+  @override
+  RemoveListener addListener(
+    Listener<DataState<T>> listener, {
+    bool fireImmediately = true,
+  }) {
+    final dispose =
+        super.addListener(listener, fireImmediately: fireImmediately);
     return () {
-      final notifier = DataStateNotifier<T>(
-        DataState(null, isLoading: true),
-        reload: (notifier) async {
-          try {
-            notifier.data = notifier.data.copyWith(
-                model: await this(), exception: null, isLoading: false);
-          } catch (e, stack) {
-            notifier.data = notifier.data
-                .copyWith(exception: e, stackTrace: stack, isLoading: false);
-          }
-        },
-      );
-      return notifier;
+      dispose();
+      onDispose?.call();
     };
   }
-}
 
-extension StreamNotifierX<T> on Stream<T> Function() {
-  DataStateNotifier<T> Function() get asDataNotifier {
-    return () {
-      final notifier =
-          DataStateNotifier<T>(DataState(null), reload: (notifier) {
-        return this().handleError((error) {
-          notifier.data = notifier.data.copyWith(exception: error);
-        }).forEach((value) {
-          notifier.data = notifier.data.copyWith(model: value, exception: null);
-        });
-      });
-
-      return notifier;
-    };
-  }
-}
-
-extension ValueStreamNotifierX<T> on ValueStream<T> Function() {
-  DataStateNotifier<T> Function() get asDataNotifier {
-    return () {
-      final stream = this();
-      final notifier =
-          DataStateNotifier<T>(DataState(stream.value), reload: (notifier) {
-        return stream.handleError((error) {
-          notifier.data = notifier.data.copyWith(exception: error);
-        }).forEach((value) {
-          notifier.data = notifier.data.copyWith(model: value, exception: null);
-        });
-      });
-
-      return notifier;
-    };
+  @override
+  @mustCallSuper
+  void dispose() {
+    if (mounted) {
+      super.dispose();
+    }
+    onDispose?.call();
   }
 }

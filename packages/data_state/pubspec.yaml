@@ -1,6 +1,6 @@
 name: data_state
 description: A reactive data structure for loading/error/data substates
-version: 0.3.3
+version: 0.3.4
 homepage: https://github.com/flutterdata/data_state
 
 environment:
@@ -9,8 +9,6 @@ environment:
 dependencies:
   freezed_annotation: ^0.11.0
   state_notifier: ^0.5.0
-  async: ^2.4.0
-  rxdart: ^0.24.1
 
 dev_dependencies:
   test: ^1.9.4
