@@ -12,13 +12,10 @@ T _$identity<T>(T value) => value;
 class _$DataStateTearOff {
   const _$DataStateTearOff();
 
-  _DataState<T> call<T>(
-      {T model,
-      bool isLoading = false,
-      Object exception,
-      StackTrace stackTrace}) {
+  _DataState<T> call<T>(@nullable T model,
+      {bool isLoading = false, Object exception, StackTrace stackTrace}) {
     return _DataState<T>(
-      model: model,
+      model,
       isLoading: isLoading,
       exception: exception,
       stackTrace: stackTrace,
@@ -30,6 +27,7 @@ class _$DataStateTearOff {
 const $DataState = _$DataStateTearOff();
 
 mixin _$DataState<T> {
+  @nullable
   T get model;
   bool get isLoading;
   Object get exception;
@@ -42,7 +40,11 @@ abstract class $DataStateCopyWith<T, $Res> {
   factory $DataStateCopyWith(
           DataState<T> value, $Res Function(DataState<T>) then) =
       _$DataStateCopyWithImpl<T, $Res>;
-  $Res call({T model, bool isLoading, Object exception, StackTrace stackTrace});
+  $Res call(
+      {@nullable T model,
+      bool isLoading,
+      Object exception,
+      StackTrace stackTrace});
 }
 
 class _$DataStateCopyWithImpl<T, $Res> implements $DataStateCopyWith<T, $Res> {
@@ -75,7 +77,11 @@ abstract class _$DataStateCopyWith<T, $Res>
           _DataState<T> value, $Res Function(_DataState<T>) then) =
       __$DataStateCopyWithImpl<T, $Res>;
   @override
-  $Res call({T model, bool isLoading, Object exception, StackTrace stackTrace});
+  $Res call(
+      {@nullable T model,
+      bool isLoading,
+      Object exception,
+      StackTrace stackTrace});
 }
 
 class __$DataStateCopyWithImpl<T, $Res> extends _$DataStateCopyWithImpl<T, $Res>
@@ -95,7 +101,7 @@ class __$DataStateCopyWithImpl<T, $Res> extends _$DataStateCopyWithImpl<T, $Res>
     Object stackTrace = freezed,
   }) {
     return _then(_DataState<T>(
-      model: model == freezed ? _value.model : model as T,
+      model == freezed ? _value.model : model as T,
       isLoading: isLoading == freezed ? _value.isLoading : isLoading as bool,
       exception: exception == freezed ? _value.exception : exception,
       stackTrace:
@@ -105,11 +111,12 @@ class __$DataStateCopyWithImpl<T, $Res> extends _$DataStateCopyWithImpl<T, $Res>
 }
 
 class _$_DataState<T> implements _DataState<T> {
-  _$_DataState(
-      {this.model, this.isLoading = false, this.exception, this.stackTrace})
+  _$_DataState(@nullable this.model,
+      {this.isLoading = false, this.exception, this.stackTrace})
       : assert(isLoading != null);
 
   @override
+  @nullable
   final T model;
   @JsonKey(defaultValue: false)
   @override
@@ -179,13 +186,13 @@ class _$_DataState<T> implements _DataState<T> {
 }
 
 abstract class _DataState<T> implements DataState<T> {
-  factory _DataState(
-      {T model,
-      bool isLoading,
+  factory _DataState(@nullable T model,
+      {bool isLoading,
       Object exception,
       StackTrace stackTrace}) = _$_DataState<T>;
 
   @override
+  @nullable
   T get model;
   @override
   bool get isLoading;

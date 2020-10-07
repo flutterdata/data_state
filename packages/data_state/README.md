@@ -6,8 +6,8 @@ Easily produce and consume loading/error/data states in your application.
 
 `DataState` is a [`StateNotifier`](https://pub.dev/packages/state_notifier)-based alternative to `AsyncSnapshot`.
 
- - Produce events: notifier API
- - Consume events: notifier API & stream API
+ - Produce events from `DataStateNotifier`, `Future`, `Stream`, RxDart `ValueStream`
+ - Consume events through `DataStateNotifier`, `Stream`
 
 ## 👩🏾‍💻 Usage
 
@@ -21,7 +21,7 @@ Flutter example:
 @override
 Widget build(BuildContext context) {
   return DataStateBuilder<List<Post>>(
-    notifier: repo.watchPosts(),
+    notifier: () => repo.watchPosts(),
     builder: (context, state, notifier, _) {
       return Column(
         children: [
@@ -38,7 +38,7 @@ Widget build(BuildContext context) {
 }
 ```
 
-The notifier also supports a `reload` function to restart a data loading cycle. It can be combined with a gesture detector or reloader widget:
+The notifier features a `reload` function, useful to restart a data loading cycle. It can be combined with a gesture detector or reloader widget:
 
 Example 1:
 
@@ -52,13 +52,45 @@ GestureDetector(
 Example 2:
 
 ```dart
-body: EasyRefresh.builder(
-  controller: _refreshController,
-  onRefresh: () async {
-    await notifier.reload();
-    _refreshController.finishRefresh();
-  },
+RefreshIndicator(
+  onRefresh: notifier.reload,
+  child: _child,
+),
 ```
+
+### Future & Stream input support
+
+This package exposes an extension on `Future<T> Function()` called `asDataNotifier`.
+
+It allows to turn any future into a `DataStateNotifier` callback to leverage caching and reloading capabilities.
+
+Example 1:
+
+```dart
+final notifier = (() => future).asDataNotifier;
+```
+
+Example 2:
+
+```dart
+final notifier = (() {
+  if (Random().nextInt(10) > 4) {
+    return Future<String>.error('Error!');
+  }
+  return Future.delayed(
+    Duration(seconds: 1),
+    () => 'HELLO RANDOM: ${Random().nextInt(100)}!',
+  );
+}).asDataNotifier;
+```
+
+Same for `Stream`s and `ValueStream`s:
+
+```dart
+final notifier = (() => stream).asDataNotifier;
+```
+
+### Consuming streams
 
 Want to consume events via streams?
 
@@ -89,25 +121,6 @@ final state = DataState({
 });
 ```
 
-### Caching the notifier
-
-For caching and shielding from crazy amount of rebuilds, use the `lazyNotifier` parameter:
-
-```dart
-@override
-Widget build(BuildContext context) {
-  return DataStateBuilder<List<Post>>(
-    key: Key(key), // optional
-    lazyNotifier: () => repo.watchPosts(),
-    builder: (context, state, notifier, _) {
-      // ...
-    }
-  );
-}
-```
-
-Supply different `key` parameters to control the caching!
-
 ### 🎸 Producing state
 
 Example:
@@ -118,15 +131,15 @@ DataStateNotifier<List<Post>> watchPosts() {
     DataState(model: getLocalPosts()),
     reload: (notifier) async {
       notifier.state = notifier.state.copyWith(isLoading: true);
-      notifier.state = DataState(model: await loadPosts());
-    },
-    onError: (notifier, error, stackTrace) {
-      notifier.state = notifier.state
-          .copyWith(exception: error, stackTrace: stackTrace);
+      try {
+        notifier.data = await loadPosts();
+      } catch (error, stackTrace) {
+        notifier.data = notifier.data.copyWith(exception: error, stackTrace: stackTrace);
+      }
     },
   );
 
-  // start cycle
+  // kick off cycle
   return notifier..reload();
 }
 ```
