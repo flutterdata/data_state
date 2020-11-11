@@ -1,6 +1,6 @@
 name: data_state
 description: A reactive data structure for loading/error/data substates
-version: 0.3.6
+version: 0.3.7
 homepage: https://github.com/flutterdata/data_state
 
 environment:
